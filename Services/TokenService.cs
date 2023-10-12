@@ -13,11 +13,17 @@ public class TokenService
         var key = Encoding.ASCII.GetBytes(Configuration.PrivateKey); // ASCII - sem carcter especial
         
         // Assinando o token
-        new SigningCredentials(
-            new SymmetricSecurityKey(key), /* Metodo da chave simetrica onde passamos a chave */ 
+        var credentials = new SigningCredentials(
+            new SymmetricSecurityKey(key),
             SecurityAlgorithms.HmacSha256);
+
+        var tokenDescriptor = new SecurityTokenDescriptor
+        {
+            SigningCredentials = credentials,
+            Expires = DateTime.UtcNow.AddHours(2)
+        }; // info do token
         
-        var token = handler.CreateToken();
+        var token = handler.CreateToken(tokenDescriptor);
         return handler.WriteToken(token);
     }
 }
